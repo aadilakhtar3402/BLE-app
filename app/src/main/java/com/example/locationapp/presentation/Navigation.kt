@@ -9,7 +9,7 @@ fun Navigation() {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, graph = )
+    NavHost(navController = navController, graph = hshs)
 
 }
 
