@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.example.locationapp.MainActivity
 import com.example.locationapp.R
-import com.example.locationapp.dataclasses.LocationData
+import com.example.locationapp.data.LocationData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

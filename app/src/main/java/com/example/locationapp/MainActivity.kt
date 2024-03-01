@@ -1,29 +1,26 @@
 package com.example.locationapp
 
-import android.Manifest
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.locationapp.Utils.LocationUpdateManager
 import com.example.locationapp.Utils.LoggingManagar
-import com.example.locationapp.dataclasses.LocationData
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.Timer
-import java.util.TimerTask
+import com.example.locationapp.presentation.Navigation
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val REQUEST_LOCATION = 1
     lateinit var btnGetLocation: Button
@@ -31,24 +28,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationManager: LocationManager
     private lateinit var locationUpdateManager: LocationUpdateManager
     private lateinit var loggingManagar: LoggingManagar
+    @Inject lateinit var bluetoothAdapter: BluetoothAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        //setContentView(R.layout.activity_main)
 
-        ActivityCompat.requestPermissions(
+        setContent {
+            Navigation(
+                onBluetoothStateChanged = {
+                    showBluetoothDialog()
+                }
+            )
+        }
+
+        /*ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             REQUEST_LOCATION
-        )
+        )*/
 
-        locationUpdateManager = LocationUpdateManager(this, REQUEST_LOCATION)
-        loggingManagar = LoggingManagar(this, locationUpdateManager)
+        //locationUpdateManager = LocationUpdateManager(this, REQUEST_LOCATION)
+       // loggingManagar = LoggingManagar(this, locationUpdateManager)
+       // locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        showLocation = findViewById(R.id.showLocation)
+        /*showLocation = findViewById(R.id.showLocation)
         btnGetLocation = findViewById(R.id.btnGetLocation)
 
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
 
         btnGetLocation.setOnClickListener {
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -56,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 loggingManagar.toggleLogging()
             }
-        }
+        }*/
     }
 
     private fun onGPS() {
@@ -74,6 +81,30 @@ class MainActivity : AppCompatActivity() {
     fun updateLocationData(lat: Double, longi: Double, time: String) {
         showLocation.append("Latitude: $lat, Longitude: $longi, Time: $time\n")
     }
+
+    override fun onStart() {
+        super.onStart()
+        showBluetoothDialog()
+    }
+
+    private var isBluetoothDialogAlreadyShown = false
+    private fun showBluetoothDialog(){
+        if (!bluetoothAdapter.isEnabled) {
+            if (!isBluetoothDialogAlreadyShown) {
+                val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startBluetoothIntentForResult.launch(enableBluetoothIntent)
+                isBluetoothDialogAlreadyShown = true
+            }
+        }
+    }
+
+    private val startBluetoothIntentForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            isBluetoothDialogAlreadyShown = false
+            if (result.resultCode != Activity.RESULT_OK) {
+                showBluetoothDialog()
+            }
+        }
 
     /*override fun onDestroy() {
         super.onDestroy()

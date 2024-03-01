@@ -1,15 +1,11 @@
 package com.example.locationapp.Utils
 
-import android.content.Context
 import android.os.Environment
 import com.example.locationapp.MainActivity
-import com.example.locationapp.dataclasses.LocationData
+import com.example.locationapp.data.LocationData
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.FileOutputStream
-import java.io.FileWriter
-import java.io.IOException
 
 class LoggingManagar(private val activity: MainActivity, private val locationUpdateManager: LocationUpdateManager) {
 

@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
+    kotlin("kapt")
 }
 
 android {
@@ -69,14 +69,25 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
 
     //DI
-    implementation("com.google.dagger:hilt-android:2.38.1")
-    kapt("com.google.dagger:hilt-compiler:2.38.1")
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-compiler:2.46")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    // implementation("androidx.hilt:hilt-work:1.0.0")
 
     //navigation
-    implementation("androidx.navigation:navigation-compose:2.5.2")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+    // implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
 
     //permissions
-    implementation("com.google.accompanist:accompanist-permissions:0.21.1-beta")
+    implementation("com.google.accompanist:accompanist-permissions:0.23.0")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
+
+hilt {
+    enableAggregatingTask = true
 }
