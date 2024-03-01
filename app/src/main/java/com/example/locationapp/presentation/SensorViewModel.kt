@@ -1,15 +1,10 @@
 package com.example.locationapp.presentation
 
-import android.location.LocationManager
-import android.widget.Button
-import android.widget.TextView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.locationapp.Utils.LocationUpdateManager
-import com.example.locationapp.Utils.LoggingManagar
 import com.example.locationapp.Utils.Resource
 import com.example.locationapp.data.ConnectionState
 import com.example.locationapp.data.SensorReceiveManager
@@ -19,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SensorViewModel @Inject constructor(
-    private val sensorReceiveManager: SensorReceiveManager,
-    // private val loggingManagar: LoggingManagar
+    private val sensorReceiveManager: SensorReceiveManager
 ) : ViewModel(){
 
     var initializingMessage by mutableStateOf<String?>(null)
@@ -79,9 +73,5 @@ class SensorViewModel @Inject constructor(
         super.onCleared()
         sensorReceiveManager.closeConnection()
     }
-
-    /*fun toggleLogging() {
-        loggingManagar.toggleLogging()
-    }*/
 
 }

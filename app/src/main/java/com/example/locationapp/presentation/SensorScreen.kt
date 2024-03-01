@@ -1,7 +1,7 @@
 package com.example.locationapp.presentation
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,9 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.navigation.NavController
+import com.example.locationapp.Utils.LocationUtils
 import com.example.locationapp.data.ConnectionState
 import com.example.locationapp.presentation.permissions.PermissionUtils
 import com.example.locationapp.presentation.permissions.SystemBroadcastReceiver
@@ -52,7 +49,6 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun SensorScreen (
     onBluetoothStateChanged:()->Unit,
-    // navController: NavController,
     viewModel: SensorViewModel = hiltViewModel()
 ) {
 
@@ -101,6 +97,9 @@ fun SensorScreen (
 
     // State to track whether the button is in start or stop state
     var isStarted by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
 
     Box(
         modifier = Modifier
@@ -191,35 +190,25 @@ fun SensorScreen (
                 .padding(bottom = 16.dp)
                 .clickable {
                     isStarted = !isStarted
-                    if (isStarted) {
-                        println("ho gaya")
-                    } else {
-                        println("nhi hua")
-                    }
+                    onStartLoggingClicked(activity)
                 }
                 .background(
                     color = if (isStarted) Color.Red else Color.Blue,
                     shape = RoundedCornerShape(10.dp)
                 )
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-                //.size(150.dp)
-                //.clip(CircleShape)
-                //.background(Color.Blue, CircleShape)
-            /*.clickable {
-                navController.navigate(Screen.SensorScreen.route) {
-                    popUpTo(Screen.StartScreen.route) {
-                        inclusive = true
-                    }
-                }
-            }*/,
+                .padding(vertical = 8.dp, horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = if (isStarted) "Stop Logging" else "Start Logging",
-                fontSize = 35.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
         }
     }
+}
+
+fun onStartLoggingClicked(activity: Activity) {
+    LocationUtils.startLocationUpdates(activity)
 }
